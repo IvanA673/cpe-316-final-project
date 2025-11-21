@@ -28,6 +28,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal.h"
+extern volatile uint32_t current_time_ms;
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
