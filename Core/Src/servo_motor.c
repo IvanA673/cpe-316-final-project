@@ -2,24 +2,23 @@
 
 
 void motor_init(void) {
+	// Enable GPIOB clock (already done, but repeated for clarity)
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
 
-	// Configure PB2 as motor signal (TIM3_CH4)
-	/* Why? --> hardware handles setting PWM signal once
-		CCR4 value is reached. PB2 AF motor mode mapped to
-		channel 4 in SMT
-	*/
+	/*---- Configure PB1 as motor signal (TIM3_CH4) -----*/
 
-	// Set PB2 as AF mode
-	GPIOB->MODER &= ~GPIO_MODER_MODE2;
-	GPIOB->MODER |= GPIO_MODER_MODE2_1;
+	// 2. Setup PB1 as Alternate Function (10)
+	GPIOB->MODER &= ~GPIO_MODER_MODE1;
+	GPIOB->MODER |= GPIO_MODER_MODE1_1;
 
-	// Map PB2 to AF2 (TIM3_CH4)
-	GPIOB->AFR[0] &= ~GPIO_AFRL_AFSEL2;
-	GPIOB->AFR[0] |= (2 << GPIO_AFRL_AFSEL2_Pos);
+	// 3. Map PB1 to AF2 (TIM3_CH4)
+	// AFR[0] controls pins 0-7. AFSEL1 field (bits 4-7) controls PB1.
+	GPIOB->AFR[0] &= ~GPIO_AFRL_AFSEL1;
+	GPIOB->AFR[0] |= (2 << GPIO_AFRL_AFSEL1_Pos); // Set AF2 (0010)
 
-	// Push-pull output type
-	GPIOB->OTYPER &= ~(GPIO_OTYPER_OT2);
+	// 4. Push-pull output type and High Speed (Best practice)
+	GPIOB->OTYPER &= ~(GPIO_OTYPER_OT1);
+	GPIOB->OSPEEDR |= (GPIO_OSPEEDR_OSPEED1);
 }
 
 void TIM3_init(void) {
@@ -32,7 +31,7 @@ void TIM3_init(void) {
 	    // Set ARR for 50Hz (80,000 counts)
 		TIM3->ARR = PWM_FREQUENCY_COUNTS;
 
-	    // Set PWM Mode 1 (OC4M = 110) on Channel 4
+		// Set PWM Mode 1 (OC4M = 110) on Channel 4
 		TIM3->CCMR2 &= ~TIM_CCMR2_OC4M_Msk;
 		TIM3->CCMR2 |= (6 << TIM_CCMR2_OC4M_Pos);
 
