@@ -4,7 +4,7 @@
 #ifndef INC_ULTRASONIC_SENSOR_H_
 #define INC_ULTRASONIC_SENSOR_H_
 
-#include "main.h" // Assumes main.h provides stm32l4xx.h, stdint.h, etc.
+#include "main.h"
 
 // --- Sensor Timing Constants (For 4MHz clock) ---
 #define MEASUREMENT_TIME (240000UL)   // 60ms cycle (ARR value)
